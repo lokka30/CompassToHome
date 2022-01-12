@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,7 +30,7 @@ public class CompassToHome extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onInteract(final PlayerInteractEvent event) {
         // Ensure they're using the correct items.
         if(!event.hasItem()) return;
@@ -41,14 +42,15 @@ public class CompassToHome extends JavaPlugin implements Listener {
         final UUID uuid = player.getUniqueId();
 
         // Check the cooldown map.
-        final double cooldown = getConfig().getDouble("cooldown", 0.0d);
+        final double cooldown = getConfig().getDouble("cooldown", 0L);
 
         // if the cooldown is 0 seconds then just ignore that system entirely.
         if(cooldown != 0.0) {
             if(cooldownMap.containsKey(uuid)) {
-                final long timeSinceLastTp = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - cooldownMap.get(uuid));
-                final double timeRemaining = cooldown - timeSinceLastTp;
-                if(timeRemaining != 0.0d) {
+                final double timeRemaining = cooldown - TimeUnit.MILLISECONDS.toSeconds(
+                        System.currentTimeMillis() - cooldownMap.get(uuid)
+                );
+                if(timeRemaining > 0.0d) {
                     player.sendMessage(colorize(
                             getConfig().getString("cooldown-message", "Please wait %time%s.")
                                     .replace("%time%", Double.toString(timeRemaining))
