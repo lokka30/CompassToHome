@@ -1,0 +1,6 @@
+name: 'CompassToHome'
+version: '${project.version}'
+main: 'me.lokka30.compasstohome.CompassToHome'
+api-version: '1.13'
+author: 'lokka30'
+description: 'Let the compass take you home!'

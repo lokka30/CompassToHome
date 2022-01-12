@@ -1,0 +1,22 @@
+# Item type / material used for the plugin.
+material: 'COMPASS'
+
+# Cooldown between uses, in seconds. Set to 0 for no cooldown.
+cooldown: 15.0
+
+# Message sent if the user tries to use the item whilst in the cooldown period.
+cooldown-message: '&b&lCompassToHome: &7Please wait &b%time%s&7 until you can use this again.'
+
+# Message sent when the user successfully teleports.
+teleport-message: '&b&lCompassToHome: &7Whoosh! Teleported to &8[&b%x%&7, &b%y%&7, &b%z%&7 in &b%world%&8]&7.'
+
+# Play a sound on teleport.
+teleport-sound:
+  enabled: true
+  id: 'ENTITY_ENDERMAN_TELEPORT'
+  volume: 1.0
+  pitch: 2.0
+
+# File metadata - don't change any of this!
+file:
+  version: 1
