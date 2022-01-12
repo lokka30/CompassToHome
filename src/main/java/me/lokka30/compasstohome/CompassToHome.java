@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -20,6 +21,7 @@ public class CompassToHome extends JavaPlugin implements Listener {
     // Stores the system time for each player of when they use the compass.
     // Used for cooldowns.
     final HashMap<UUID, Long> cooldownMap = new HashMap<>();
+    final boolean isOneNine = isOneNine();
 
     @Override
     public void onEnable() {
@@ -30,16 +32,38 @@ public class CompassToHome extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onInteract(final PlayerInteractEvent event) {
-        // Ensure they're using the correct items.
-        if(!event.hasItem()) return;
-        if(event.getItem().getType() != Material.valueOf(getConfig().getString("material", "COMPASS"))) return;
-        if(!event.getAction().toString().startsWith("RIGHT_CLICK")) return;
-
         // Variables we'll use later.
         final Player player = event.getPlayer();
         final UUID uuid = player.getUniqueId();
+
+        // Ensure it's a right click
+        switch(event.getAction()) {
+            case RIGHT_CLICK_AIR:
+            case RIGHT_CLICK_BLOCK:
+                break;
+            default:
+                return;
+        }
+
+        // Ensure they're using the correct item type.
+        ItemStack itemStack;
+        if(event.hasItem()) {
+            itemStack = event.getItem();
+        } else {
+            if(isOneNine) {
+                itemStack = player.getInventory().getItemInMainHand();
+                if(isItemStackAir(itemStack)) {
+                    itemStack = player.getInventory().getItemInOffHand();
+                }
+            } else {
+                itemStack = player.getItemInHand();
+            }
+        }
+        if(isItemStackAir(itemStack)) return;
+        if(itemStack.getType() != Material.valueOf(getConfig().getString("material", "COMPASS"))) return;
 
         // Check the cooldown map.
         final double cooldown = getConfig().getDouble("cooldown", 0L);
@@ -93,5 +117,19 @@ public class CompassToHome extends JavaPlugin implements Listener {
     // Converts the color codes in a message.
     private String colorize(final String msg) {
         return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+
+    // Check if an itemstack is air or nothing
+    private boolean isItemStackAir(ItemStack is) {
+        return is == null || is.getType() == Material.AIR;
+    }
+
+    private boolean isOneNine() {
+        try {
+            Material.valueOf("SHIELD");
+        } catch(IllegalArgumentException ex) {
+            return false;
+        }
+        return true;
     }
 }
