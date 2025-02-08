@@ -1,4 +1,11 @@
-# Project exclude paths
-/target/
-/.idea/
-/CompassToHome.iml
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Maven
+target/
+
+# macOS
+._.git
+.DS_Store
+Thumbs.db
