@@ -17,6 +17,16 @@ teleport-sound:
   volume: 1.0
   pitch: 2.0
 
+# List commands the PLAYER will run after a compass teleport.
+# Commands should start with a slash.
+# Example: ['/me I teleported...', '/me to my home!']
+player-commands-to-run: []
+
+# List commands the SERVER will run after a compass teleport.
+# Commands should start with a slash.
+# Example: ['/broadcast %player-name% teleported!']
+server-commands-to-run: []
+
 # File metadata - don't change any of this!
 file:
   version: 1
